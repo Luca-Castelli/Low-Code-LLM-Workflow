@@ -1,0 +1,7 @@
+pydantic
+pyyaml
+requests
+instructor
+openai
+python-dotenv
+requests
