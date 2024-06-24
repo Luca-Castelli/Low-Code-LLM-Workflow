@@ -20,14 +20,15 @@ def scrape_articles(search_results: List[SearchResult]) -> List[Article]:
     return articles
 
 
-def summarize_article(article: Article) -> Article:
-    prompt = f"Summarize the following article:\n\nTitle: {article.title}\n\nLink: {article.link}\n\nContent: {article.content}"
+def summarize_article(article: Article, prompt: str) -> Article:
+    formatted_prompt = prompt.format(
+        title=article.title, link=article.link, content=article.content
+    )
     llm_client = LLMClient(model_name="gpt-4o")
-    article_summary = llm_client.call_with_data_model(prompt, ArticleSummary)
+    article_summary = llm_client.call_with_data_model(formatted_prompt, ArticleSummary)
     article.summary = article_summary.summary
     return article
 
 
-def summarize_articles(articles: List[Article]) -> List[Article]:
-    articles = articles[:2]
-    return [summarize_article(article) for article in articles]
+def summarize_articles(articles: List[Article], prompt: str) -> List[Article]:
+    return [summarize_article(article, prompt) for article in articles]

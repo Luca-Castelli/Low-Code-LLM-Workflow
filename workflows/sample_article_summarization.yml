@@ -16,4 +16,5 @@ steps:
     output_type: "List[models.article_model.Article]"
     input_var: "scraped_articles"
     output_var: "article_summaries"
+    prompt: "Summarize the following article:\n\nTitle: {title}\n\nLink: {link}\n\nContent: {content}"
 final_output_var: "article_summaries"

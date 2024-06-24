@@ -55,7 +55,11 @@ def execute_step(step: dict, data: Any) -> Any:
             input_data = InputModel.parse_obj(data)
 
         # Function execution
-        output_data = function(input_data)
+        if "prompt" in step:
+            prompt = step["prompt"]
+            output_data = function(input_data, prompt)
+        else:
+            output_data = function(input_data)
 
         # Handling output
         if output_type != "raw":
@@ -110,12 +114,12 @@ def run_workflow(workflow_file: str, initial_data: str):
 
 if __name__ == "__main__":
     # workflow_choice = input(
-    #     "Enter the workflow to run (e.g., user/google_search/company_article_summary): "
+    #     "Enter the workflow to run (e.g., sample_search/sample_article_summarization): "
     # ).strip()
-    workflow_choice = "company_article_summary"
+    workflow_choice = "sample_article_summarization"
     initial_data = input("Enter the initial data: ").strip()
 
-    workflow_file = f"workflows/{workflow_choice}_workflow.yml"
+    workflow_file = f"workflows/{workflow_choice}.yml"
     if os.path.exists(workflow_file):
         run_workflow(workflow_file, initial_data)
     else:
