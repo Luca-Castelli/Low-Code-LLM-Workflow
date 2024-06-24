@@ -1,16 +1,10 @@
-# functions/search_functions.py
+from typing import List
+
 from helpers.search_helper import GoogleCustomSearchClient
-from models.search_model import SearchResults
+from models.search_model import SearchResult
 
 
-def perform_search(query: str) -> SearchResults:
+def perform_search(query: str) -> List[SearchResult]:
     search_client = GoogleCustomSearchClient()
-    return search_client.search(f'"{query}"')
-
-
-def extract_titles(results: SearchResults) -> list:
-    return [item.title for item in results.items]
-
-
-def post_process_titles(titles: list) -> list:
-    return [title.upper() for title in titles]
+    search_results = search_client.search(f'"{query}"')
+    return search_results

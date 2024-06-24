@@ -5,3 +5,5 @@ instructor
 openai
 python-dotenv
 requests
+google-api-python-client
+langsmith

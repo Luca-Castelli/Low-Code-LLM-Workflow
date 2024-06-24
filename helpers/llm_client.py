@@ -1,5 +1,6 @@
+import instructor
 from dotenv import load_dotenv
-from instructor import from_openai
+from langsmith import wrappers
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -13,9 +14,11 @@ class LLMClient:
         self.client = self._initialize_client()
 
     def _initialize_client(self):
-        return from_openai(OpenAI())
+        client = wrappers.wrap_openai(OpenAI())
+        client = instructor.patch(client)
+        return client
 
-    def call(self, prompt: str, data_model: BaseModel) -> BaseModel:
+    def call_with_data_model(self, prompt: str, data_model: BaseModel) -> BaseModel:
 
         response = self.client.chat.completions.create(
             model=self.model_name,

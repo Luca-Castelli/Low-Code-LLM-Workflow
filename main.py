@@ -45,21 +45,24 @@ def execute_step(step: dict, data: Any) -> Any:
         # Handling input
         if input_type == "raw":
             input_data = data[step["input_var"]] if "input_var" in step else data
+        elif input_type.startswith("List["):
+            input_model_module, input_model_name = input_type[5:-1].rsplit(".", 1)
+            InputModel = getattr(import_module(input_model_module), input_model_name)
+            input_data = [InputModel.parse_obj(item) for item in data]
         else:
             input_model_module, input_model_name = input_type.rsplit(".", 1)
             InputModel = getattr(import_module(input_model_module), input_model_name)
-            if isinstance(data, list):
-                input_data = [InputModel.parse_obj(item) for item in data]
-            else:
-                input_data = InputModel.parse_obj(data)
+            input_data = InputModel.parse_obj(data)
 
         # Function execution
         output_data = function(input_data)
 
         # Handling output
         if output_type != "raw":
-            if isinstance(output_data, list):
-                output_model_module, output_model_name = output_type.rsplit(".", 1)
+            if output_type.startswith("List["):
+                output_model_module, output_model_name = output_type[5:-1].rsplit(
+                    ".", 1
+                )
                 OutputModel = getattr(
                     import_module(output_model_module), output_model_name
                 )
@@ -106,9 +109,10 @@ def run_workflow(workflow_file: str, initial_data: str):
 
 
 if __name__ == "__main__":
-    workflow_choice = input(
-        "Enter the workflow to run (e.g., user/google_search/company_article_summary): "
-    ).strip()
+    # workflow_choice = input(
+    #     "Enter the workflow to run (e.g., user/google_search/company_article_summary): "
+    # ).strip()
+    workflow_choice = "company_article_summary"
     initial_data = input("Enter the initial data: ").strip()
 
     workflow_file = f"workflows/{workflow_choice}_workflow.yml"
